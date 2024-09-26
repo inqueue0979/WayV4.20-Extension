@@ -2,7 +2,7 @@ function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 bg-white border-gray-200">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
-            <a href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
+            <a href="#" className="flex items-center space-x-3 rtl:space-x-reverse">
                 <img src="wayv.png" className="h-6 mr-0 pr-0" alt="WayV 로고" />
                 <span className="self-center text-lg font-semibold whitespace-nowrap ml-1 Pretendard-Bold">webridge</span>
             </a>
