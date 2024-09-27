@@ -5,21 +5,3 @@ chrome.runtime.onInstalled.addListener((details) => {
       });
     }
   });
-
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === 'highlightImages') {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.scripting.executeScript({
-          target: { tabId: tabs[0].id },
-          function: highlightImagesWithoutAlt
-        });
-      });
-    }
-  });
-  
-  function highlightImagesWithoutAlt() {
-    const problematicImages = document.querySelectorAll('img:not([alt])');
-    problematicImages.forEach(img => {
-      img.style.border = "5px solid red";
-    });
-  }
