@@ -78,7 +78,7 @@ function toggleVideoHighlight(isChecked) {
 
     // 문제가 있으면 빨간 테두리, 블러 처리, 빗금 처리, 그리고 느낌표 추가
     if (issues.length > 0 && isChecked) {
-      video.style.border = "5px solid red";
+      video.style.border = "5px solid orange";
       video.style.filter = "blur(5px)";
 
       // 빗금 처리 추가 (반투명한 대각선 스트라이프 패턴)
@@ -124,7 +124,7 @@ function toggleTabAccessibleHighlight(isChecked) {
 
     if (!isFocusable && isChecked) {
       // 탭 키로 접근 불가능한 요소에 파란색 테두리 적용
-      element.style.border = "3px solid blue";
+      element.style.border = "3px solid yellow";
     } else {
       // 테두리 제거
       element.style.border = "none";
@@ -178,7 +178,7 @@ function wrapProblematicText(element, fgColor, bgColor) {
     
     textNodes.forEach(node => {
       const span = document.createElement('span');
-      span.style.border = "2px solid yellow"; // 문제 있는 텍스트에 노란색 테두리 적용
+      span.style.border = "2px solid green"; // 문제 있는 텍스트에 노란색 테두리 적용
       span.style.display = "inline-block"; // 인라인 블록으로 설정하여 테두리 제대로 표시
       span.textContent = node.nodeValue; // 텍스트를 span에 복사
 
@@ -192,7 +192,7 @@ function checkContrastAndHighlight(isChecked) {
   if (!isChecked) {
     // 체크 해제 시, 기존 span 제거하고 원래 텍스트 복원 (간단한 방식으로 적용)
     document.querySelectorAll('span').forEach(span => {
-      if (span.style.border === '2px solid yellow') {
+      if (span.style.border === '2px solid green') {
         span.replaceWith(span.textContent); // 원래 텍스트로 복원
       }
     });
@@ -232,7 +232,7 @@ function checkTableStructureAndHighlight(isChecked) {
 
     if (!compliant) {
       // 준수하지 않으면 초록색 테두리 적용
-      table.style.border = "3px solid green";
+      table.style.border = "3px solid blue";
     } else {
       // 준수하는 경우 테두리 제거
       table.style.border = "none";
@@ -262,7 +262,7 @@ function checkLabelsAndHighlight(isChecked) {
 
     // 레이블이 없으면 빨간 테두리 적용
     if (!label) {
-      inputElement.style.border = "3px solid red";
+      inputElement.style.border = "3px solid purple";
     } else {
       // 레이블이 있으면 테두리 제거
       inputElement.style.border = "none";
@@ -298,7 +298,7 @@ function checkLinkTextAndHighlight(isChecked) {
 
     // 문제가 있는 경우 빨간 테두리 적용
     if (problematic) {
-      link.style.border = "3px solid red";
+      link.style.border = "3px solid magenta";
     } else {
       link.style.border = "none"; // 문제가 없으면 테두리 제거
     }
