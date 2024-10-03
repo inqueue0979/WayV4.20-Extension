@@ -1,7 +1,7 @@
 {
   "name": "webridge | KWCAG 접근성 검사 도구",
   "description": "Powered by SK LOOKIE SolveIT WayV4.20",
-  "version": "1.0",
+  "version": "1.0.1",
   "manifest_version": 3,
   "host_permissions": [
     "http://*/*", 
@@ -40,10 +40,7 @@
   "permissions": [
     "tabs",
     "activeTab",
-    "webRequest",
-    "webNavigation",
     "storage",
-    "cookies",
     "scripting"
   ]
 }
