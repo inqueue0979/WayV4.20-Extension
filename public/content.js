@@ -1,6 +1,62 @@
+// 전역 툴팁 관리 변수
+let tooltip = null;
+
+// 툴팁 생성 함수
+function createTooltip(message) {
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.style.position = 'absolute';
+    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.75)';
+    tooltip.style.color = 'white';
+    tooltip.style.padding = '5px';
+    tooltip.style.borderRadius = '5px';
+    tooltip.style.fontSize = '12px';
+    tooltip.style.zIndex = '1000';
+    document.body.appendChild(tooltip);
+  }
+  tooltip.textContent = message;
+  tooltip.style.display = 'block'; // 툴팁을 보여줌
+}
+
+// 툴팁 숨기기 함수
+function hideTooltip() {
+  if (tooltip) {
+    tooltip.style.display = 'none'; // 툴팁을 숨김
+  }
+}
+
+// 툴팁 표시 함수
+function showTooltip(element, message) {
+  createTooltip(message);
+
+  // 마우스가 움직일 때 툴팁 위치를 업데이트
+  element.addEventListener('mousemove', (e) => {
+    tooltip.style.top = `${e.pageY + 10}px`; // 마우스 아래쪽에 툴팁 표시
+    tooltip.style.left = `${e.pageX + 10}px`;
+  });
+
+  // 마우스가 요소에서 벗어날 때 툴팁 숨기기
+  element.addEventListener('mouseout', hideTooltip);
+}
+
+// 접근성 문제를 한 툴팁에 모아 표시
+function addTooltipForElement(element, message) {
+  if (!element._tooltipMessages) {
+    element._tooltipMessages = new Set(); // 문제 메시지를 저장할 Set 생성
+    element.addEventListener('mouseover', () => {
+      const combinedMessage = Array.from(element._tooltipMessages).join(', ');
+      showTooltip(element, combinedMessage);
+    });
+  }
+  element._tooltipMessages.add(message); // 문제 메시지를 추가
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 function toggleAltHighlight(isChecked) {
-  const problematicImages = document.querySelectorAll('img:not([alt])');
-  
+  // alt 속성이 아예 없거나, alt 속성이 있지만 빈 값인 이미지 선택
+  const problematicImages = document.querySelectorAll('img:not([alt]), img[alt=""]');
+
   problematicImages.forEach(img => {
     if (isChecked) {
       // 빨간 테두리 및 블러 처리 적용
@@ -11,13 +67,15 @@ function toggleAltHighlight(isChecked) {
       img.style.backgroundImage = "repeating-linear-gradient(45deg, rgba(255, 0, 0, 0.2) 0, rgba(255, 0, 0, 0.2) 10px, transparent 10px, transparent 20px)";
       img.style.backgroundSize = "100% 100%";  // 빗금 패턴 적용
 
-      // 느낌표 추가
+      // 문제 툴팁 추가
+      addTooltipForElement(img, "대체 텍스트가 누락되었습니다.");
+
+      // 느낌표 추가 (이미 부모 요소에 없을 경우만 추가)
       if (!img.parentElement.querySelector('.warning-icon')) {
         const warningIcon = document.createElement('div');
         warningIcon.classList.add('warning-icon');
-        warningIcon.innerHTML = '대체텍스트 오류';  // 느낌표 아이콘
         warningIcon.style.position = 'absolute';
-        warningIcon.style.top = '50%'
+        warningIcon.style.top = '50%';
         warningIcon.style.left = '50%';
         warningIcon.style.transform = 'translate(-50%, -50%)'; // 중앙 정렬
         warningIcon.style.fontSize = '16px'; // 느낌표 크기
@@ -100,6 +158,8 @@ function toggleVideoHighlight(isChecked) {
         warningIcon.style.padding = '5px';
         video.parentElement.style.position = 'relative'; // 부모 요소에 위치 설정
         video.parentElement.appendChild(warningIcon);
+
+        addTooltipForElement(video, `영상 오류: ${issues.join(", ")}`);
       }
     } else {
       // 테두리, 블러, 빗금 및 느낌표 제거
@@ -125,6 +185,7 @@ function toggleTabAccessibleHighlight(isChecked) {
     if (!isFocusable && isChecked) {
       // 탭 키로 접근 불가능한 요소에 파란색 테두리 적용
       element.style.border = "3px solid yellow";
+      addTooltipForElement(element, "탭 키로 접근할 수 없습니다.");
     } else {
       // 테두리 제거
       element.style.border = "none";
@@ -182,6 +243,8 @@ function wrapProblematicText(element, fgColor, bgColor) {
       span.style.display = "inline-block"; // 인라인 블록으로 설정하여 테두리 제대로 표시
       span.textContent = node.nodeValue; // 텍스트를 span에 복사
 
+      addTooltipForElement(span, `명도 대비가 낮습니다: ${contrastRatio.toFixed(2)}`);
+      
       // 기존 텍스트 노드를 span으로 대체
       node.parentNode.replaceChild(span, node);
     });
@@ -219,7 +282,7 @@ function checkTableStructureAndHighlight(isChecked) {
     document.querySelectorAll('table').forEach(table => {
       table.style.border = "none";
     });
-    return;
+    return;s
   }
 
   const tables = document.querySelectorAll('table');
@@ -233,6 +296,7 @@ function checkTableStructureAndHighlight(isChecked) {
     if (!compliant) {
       // 준수하지 않으면 초록색 테두리 적용
       table.style.border = "3px solid blue";
+      addTooltipForElement(table, "표 구조에 문제가 있습니다.");
     } else {
       // 준수하는 경우 테두리 제거
       table.style.border = "none";
@@ -263,6 +327,7 @@ function checkLabelsAndHighlight(isChecked) {
     // 레이블이 없으면 빨간 테두리 적용
     if (!label) {
       inputElement.style.border = "3px solid purple";
+      addTooltipForElement(inputElement, "레이블이 제공되지 않았습니다.");
     } else {
       // 레이블이 있으면 테두리 제거
       inputElement.style.border = "none";
@@ -299,6 +364,7 @@ function checkLinkTextAndHighlight(isChecked) {
     // 문제가 있는 경우 빨간 테두리 적용
     if (problematic) {
       link.style.border = "3px solid magenta";
+      addTooltipForElement(link, "링크 텍스트가 모호합니다.");
     } else {
       link.style.border = "none"; // 문제가 없으면 테두리 제거
     }
